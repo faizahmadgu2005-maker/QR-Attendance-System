@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Galgotias University - QR Attendance System</title>
-    <!-- Font Awesome & QRCode.js library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -16,13 +15,13 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%);
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
             min-height: 100vh;
             padding: 1.5rem;
         }
 
         .header {
-            background: linear-gradient(135deg, #1a2a3a, #2c3e50);
+            background: linear-gradient(135deg, #0f1a2e, #1a2a3a);
             color: white;
             padding: 1.5rem 2rem;
             border-radius: 20px;
@@ -32,7 +31,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
         .header h1 {
@@ -48,7 +47,7 @@
 
         .header .university-badge {
             font-size: 0.85rem;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.1);
             padding: 0.4rem 1.2rem;
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -59,10 +58,9 @@
             margin: 0 auto;
         }
 
-        /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -121,12 +119,11 @@
         }
 
         .stat-card .info p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #6b7280;
             font-weight: 500;
         }
 
-        /* Main Layout */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -161,7 +158,6 @@
             color: #2c3e50;
         }
 
-        /* QR Section */
         .qr-container {
             display: flex;
             flex-direction: column;
@@ -187,6 +183,7 @@
             flex-wrap: wrap;
             justify-content: center;
             margin-top: 0.5rem;
+            width: 100%;
         }
 
         .qr-controls select,
@@ -198,6 +195,8 @@
             outline: none;
             background: #f9fafb;
             transition: 0.15s;
+            flex: 1;
+            min-width: 120px;
         }
 
         .qr-controls select:focus,
@@ -263,11 +262,18 @@
         }
 
         .btn-sm {
-            padding: 0.3rem 1rem;
+            padding: 0.4rem 1.2rem;
             font-size: 0.8rem;
         }
 
-        /* Student List */
+        .btn-info {
+            background: #1a56db;
+            color: white;
+        }
+        .btn-info:hover {
+            background: #1e40af;
+        }
+
         .student-list-header {
             display: flex;
             justify-content: space-between;
@@ -398,13 +404,20 @@
             background: #fecaca;
         }
 
+        .btn-scan {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .btn-scan:hover {
+            background: #a7f3d0;
+        }
+
         .empty-row td {
             text-align: center;
             color: #6b7280;
             padding: 2rem 0;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -551,6 +564,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            max-width: 400px;
         }
 
         .toast.show {
@@ -563,6 +577,77 @@
         }
         .toast.error {
             background: #991b1b;
+        }
+        .toast.info {
+            background: #1a56db;
+        }
+
+        /* Scan Popup */
+        .scan-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .scan-popup.show {
+            display: flex;
+        }
+
+        .scan-popup-content {
+            background: white;
+            max-width: 500px;
+            width: 92%;
+            padding: 2.5rem;
+            border-radius: 32px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .scan-popup-content .scan-icon {
+            font-size: 4rem;
+            color: #1a56db;
+            margin-bottom: 1rem;
+        }
+
+        .scan-popup-content h2 {
+            color: #1a2a3a;
+            margin-bottom: 0.5rem;
+        }
+
+        .scan-popup-content p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .scan-popup-content .student-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 30px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            outline: none;
+            background: #f9fafb;
+        }
+
+        .scan-popup-content .student-select:focus {
+            border-color: #1a56db;
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+        }
+
+        .scan-popup-content .scan-actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         @media (max-width: 640px) {
@@ -577,14 +662,6 @@
             }
             .card {
                 padding: 1rem;
-            }
-            .qr-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .student-list-header {
-                flex-direction: column;
-                align-items: stretch;
             }
         }
     </style>
@@ -647,7 +724,7 @@
             <!-- QR Code Section -->
             <div class="card">
                 <div class="card-title">
-                    <i class="fas fa-qrcode"></i> QR Code Scanner
+                    <i class="fas fa-qrcode"></i> QR Code for Attendance
                 </div>
                 <div class="qr-container">
                     <div id="qrcode"></div>
@@ -661,20 +738,17 @@
                             <option value="BCA-3B">BCA 3rd Year - B</option>
                         </select>
                         <input type="date" id="qrDate" />
+                    </div>
+                    <div style="display:flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; width:100%;">
                         <button class="btn btn-primary btn-sm" id="generateQRBtn">
-                            <i class="fas fa-sync-alt"></i> Generate
+                            <i class="fas fa-sync-alt"></i> Generate QR
+                        </button>
+                        <button class="btn btn-success btn-sm" id="scanQRBtn">
+                            <i class="fas fa-qrcode"></i> 📱 Scan QR (Simulate)
                         </button>
                     </div>
-                    <div style="display:flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;">
-                        <button class="btn btn-success btn-sm" id="markPresentBtn">
-                            <i class="fas fa-check"></i> Mark Present (Scan)
-                        </button>
-                        <button class="btn btn-danger btn-sm" id="markAbsentBtn">
-                            <i class="fas fa-times"></i> Mark Absent
-                        </button>
-                    </div>
-                    <p style="font-size:0.8rem;color:#6b7280;margin-top:0.5rem;">
-                        <i class="fas fa-info-circle"></i> Click "Mark Present" to simulate QR scan
+                    <p style="font-size:0.8rem;color:#6b7280;margin-top:0.5rem;text-align:center;">
+                        <i class="fas fa-info-circle"></i> Students scan this QR code to mark themselves present
                     </p>
                 </div>
             </div>
@@ -735,6 +809,28 @@
         <span id="toastMessage">Success!</span>
     </div>
 
+    <!-- Scan Popup - Student Selection -->
+    <div class="scan-popup" id="scanPopup">
+        <div class="scan-popup-content">
+            <div class="scan-icon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <h2>QR Code Scanned!</h2>
+            <p>Select the student who scanned the QR code to mark them <strong>Present</strong></p>
+            <select class="student-select" id="scanStudentSelect">
+                <option value="">-- Select Student --</option>
+            </select>
+            <div class="scan-actions">
+                <button class="btn btn-success" id="confirmScanBtn">
+                    <i class="fas fa-check"></i> Mark Present
+                </button>
+                <button class="btn btn-outline" id="cancelScanBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <div class="modal" id="studentModal">
         <div class="modal-content">
@@ -771,7 +867,7 @@
     <script>
         (function() {
             // ----- DATA LAYER -----
-            const STORAGE_KEY = 'galgotias_qr_attendance';
+            const STORAGE_KEY = 'galgotias_qr_attendance_v2';
 
             function getDefaultData() {
                 return {
@@ -813,6 +909,7 @@
             let currentFilter = '';
             let selectedDate = new Date().toISOString().split('T')[0];
             let selectedClass = 'BCA-1A';
+            let qrCodeInstance = null;
 
             // ----- DOM REFS -----
             const tbody = document.getElementById('studentTableBody');
@@ -825,8 +922,7 @@
             const classSelect = document.getElementById('classSelect');
             const qrDateInput = document.getElementById('qrDate');
             const generateQRBtn = document.getElementById('generateQRBtn');
-            const markPresentBtn = document.getElementById('markPresentBtn');
-            const markAbsentBtn = document.getElementById('markAbsentBtn');
+            const scanQRBtn = document.getElementById('scanQRBtn');
             const addStudentBtn = document.getElementById('addStudentBtn');
             const searchInput = document.getElementById('searchStudent');
             const searchBtn = document.getElementById('searchBtn');
@@ -844,7 +940,11 @@
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
 
-            let qrCodeInstance = null;
+            // Scan Popup
+            const scanPopup = document.getElementById('scanPopup');
+            const scanStudentSelect = document.getElementById('scanStudentSelect');
+            const confirmScanBtn = document.getElementById('confirmScanBtn');
+            const cancelScanBtn = document.getElementById('cancelScanBtn');
 
             // ----- INIT -----
             function init() {
@@ -869,7 +969,7 @@
                     text: dataStr,
                     width: 200,
                     height: 200,
-                    colorDark: '#1a2a3a',
+                    colorDark: '#0f1a2e',
                     colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
@@ -877,7 +977,7 @@
                 selectedDate = date;
                 selectedClass = cls;
 
-                // Update last scan
+                // Update last scan time
                 const now = new Date();
                 lastScan.textContent = now.toLocaleTimeString();
             }
@@ -891,7 +991,6 @@
                 const key = getAttendanceKey();
                 if (!data.attendance[key]) {
                     data.attendance[key] = {};
-                    // Initialize all students as 'not-marked'
                     data.students.forEach(s => {
                         if (s.class === selectedClass) {
                             data.attendance[key][s.id] = 'not-marked';
@@ -933,10 +1032,10 @@
                     let statusLabel = 'Not Marked';
                     if (status === 'present') {
                         statusClass = 'status-present';
-                        statusLabel = 'Present';
+                        statusLabel = '✅ Present';
                     } else if (status === 'absent') {
                         statusClass = 'status-absent';
-                        statusLabel = 'Absent';
+                        statusLabel = '❌ Absent';
                     }
 
                     html += `
@@ -948,8 +1047,11 @@
                             <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                             <td>
                                 <div class="actions-cell">
+                                    <button class="btn-scan" data-id="${student.id}" title="Mark Present (QR Scan)">
+                                        <i class="fas fa-qrcode"></i> Scan
+                                    </button>
                                     <button class="btn-toggle" data-id="${student.id}" data-status="${status}">
-                                        <i class="fas fa-sync-alt"></i> Toggle
+                                        <i class="fas fa-sync-alt"></i>
                                     </button>
                                     <button class="btn-edit" data-id="${student.id}"><i class="fas fa-edit"></i></button>
                                     <button class="btn-delete" data-id="${student.id}"><i class="fas fa-trash"></i></button>
@@ -960,13 +1062,20 @@
                 });
                 tbody.innerHTML = html;
 
-                // Event bindings for actions
+                // Event bindings
+                document.querySelectorAll('.btn-scan').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        markStudentPresent(id);
+                    });
+                });
+
                 document.querySelectorAll('.btn-toggle').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const id = parseInt(this.dataset.id);
                         const currentStatus = this.dataset.status;
-                        const newStatus = currentStatus === 'present' ? 'absent' : (currentStatus === 'absent' ?
-                            'present' : 'present');
+                        const newStatus = currentStatus === 'present' ? 'absent' :
+                            (currentStatus === 'absent' ? 'present' : 'present');
                         setAttendance(id, newStatus);
                     });
                 });
@@ -988,6 +1097,7 @@
                 updateStats();
             }
 
+            // ----- SET ATTENDANCE FOR INDIVIDUAL STUDENT -----
             function setAttendance(studentId, status) {
                 const key = getAttendanceKey();
                 if (!data.attendance[key]) {
@@ -997,7 +1107,77 @@
                 saveData(data);
                 renderTable();
                 updateStats();
-                showToast(`Student marked ${status}`, status === 'present' ? 'success' : 'error');
+
+                const student = data.students.find(s => s.id === studentId);
+                const statusLabel = status === 'present' ? 'Present ✅' : (status === 'absent' ? 'Absent ❌' : 'Not Marked');
+                showToast(`${student ? student.name : 'Student'} marked ${statusLabel}`,
+                    status === 'present' ? 'success' : 'error');
+            }
+
+            // ----- MARK STUDENT PRESENT (QR SCAN) -----
+            function markStudentPresent(studentId) {
+                const student = data.students.find(s => s.id === studentId);
+                if (!student) {
+                    showToast('Student not found!', 'error');
+                    return;
+                }
+
+                const key = getAttendanceKey();
+                if (!data.attendance[key]) {
+                    data.attendance[key] = {};
+                }
+
+                // Check if already present
+                if (data.attendance[key][studentId] === 'present') {
+                    showToast(`${student.name} is already marked Present!`, 'info');
+                    return;
+                }
+
+                data.attendance[key][studentId] = 'present';
+                saveData(data);
+                renderTable();
+                updateStats();
+
+                // Update last scan
+                const now = new Date();
+                lastScan.textContent = `${now.toLocaleTimeString()} - ${student.name}`;
+
+                showToast(`✅ ${student.name} marked Present via QR Scan!`, 'success');
+            }
+
+            // ----- SCAN POPUP (Simulate QR Scanner) -----
+            function openScanPopup() {
+                const students = getStudentsForCurrentClass();
+                if (students.length === 0) {
+                    showToast('No students in this class!', 'error');
+                    return;
+                }
+
+                // Populate select
+                scanStudentSelect.innerHTML = '<option value="">-- Select Student --</option>';
+                students.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = `${s.name} (${s.roll})`;
+                    scanStudentSelect.appendChild(option);
+                });
+
+                scanPopup.classList.add('show');
+            }
+
+            function closeScanPopup() {
+                scanPopup.classList.remove('show');
+                scanStudentSelect.value = '';
+            }
+
+            function confirmScan() {
+                const studentId = parseInt(scanStudentSelect.value);
+                if (!studentId) {
+                    showToast('Please select a student!', 'error');
+                    return;
+                }
+                markStudentPresent(studentId);
+                closeScanPopup();
             }
 
             // ----- STATS -----
@@ -1019,16 +1199,22 @@
                 presentToday.textContent = present;
                 absentToday.textContent = absent;
 
-                // Count total classes held (unique date_class combinations)
                 const classKeys = Object.keys(data.attendance).filter(k => k.includes(selectedClass));
                 classesHeld.textContent = classKeys.length || 0;
             }
 
             // ----- CRUD STUDENTS -----
             function addStudent(name, roll, cls) {
+                // Check for duplicate roll number
+                if (data.students.some(s => s.roll === roll)) {
+                    showToast('Roll number already exists!', 'error');
+                    return false;
+                }
+
                 const newStudent = { id: nextStudentId++, name, roll, class: cls };
                 data.students.push(newStudent);
-                // Add to all existing attendance records for this class
+
+                // Add to existing attendance records for this class
                 for (const key in data.attendance) {
                     if (key.includes(cls)) {
                         data.attendance[key][newStudent.id] = 'not-marked';
@@ -1037,78 +1223,60 @@
                 saveData(data);
                 renderTable();
                 updateStats();
-                showToast(`Student ${name} added successfully`, 'success');
+                showToast(`✅ ${name} added successfully`, 'success');
+                return true;
             }
 
             function updateStudent(id, name, roll, cls) {
                 const idx = data.students.findIndex(s => s.id === id);
-                if (idx !== -1) {
-                    const oldClass = data.students[idx].class;
-                    data.students[idx] = { id, name, roll, class: cls };
-                    // If class changed, update attendance records
-                    if (oldClass !== cls) {
-                        // Remove from old class records
-                        for (const key in data.attendance) {
-                            if (key.includes(oldClass)) {
-                                delete data.attendance[key][id];
-                            }
-                        }
-                        // Add to new class records
-                        for (const key in data.attendance) {
-                            if (key.includes(cls)) {
-                                data.attendance[key][id] = 'not-marked';
-                            }
+                if (idx === -1) return false;
+
+                // Check duplicate roll (except self)
+                if (data.students.some(s => s.roll === roll && s.id !== id)) {
+                    showToast('Roll number already exists!', 'error');
+                    return false;
+                }
+
+                const oldClass = data.students[idx].class;
+                data.students[idx] = { id, name, roll, class: cls };
+
+                if (oldClass !== cls) {
+                    // Remove from old class records
+                    for (const key in data.attendance) {
+                        if (key.includes(oldClass)) {
+                            delete data.attendance[key][id];
                         }
                     }
-                    saveData(data);
-                    renderTable();
-                    updateStats();
-                    showToast(`Student updated successfully`, 'success');
-                    return true;
+                    // Add to new class records
+                    for (const key in data.attendance) {
+                        if (key.includes(cls)) {
+                            data.attendance[key][id] = 'not-marked';
+                        }
+                    }
                 }
-                return false;
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`✅ Student updated`, 'success');
+                return true;
             }
 
             function deleteStudent(id) {
                 if (!confirm('Delete this student and all their attendance records?')) return;
                 const student = data.students.find(s => s.id === id);
                 if (!student) return;
+
                 data.students = data.students.filter(s => s.id !== id);
-                // Remove from all attendance records
                 for (const key in data.attendance) {
                     delete data.attendance[key][id];
                 }
                 saveData(data);
                 renderTable();
                 updateStats();
-                showToast(`Student ${student.name} deleted`, 'error');
+                showToast(`🗑️ ${student.name} deleted`, 'error');
             }
 
-            // ----- BULK ATTENDANCE -----
-            function markAllPresent() {
-                const key = getAttendanceKey();
-                const students = getStudentsForCurrentClass();
-                students.forEach(s => {
-                    data.attendance[key][s.id] = 'present';
-                });
-                saveData(data);
-                renderTable();
-                updateStats();
-                showToast(`All students marked present for ${selectedClass}`, 'success');
-            }
-
-            function markAllAbsent() {
-                const key = getAttendanceKey();
-                const students = getStudentsForCurrentClass();
-                students.forEach(s => {
-                    data.attendance[key][s.id] = 'absent';
-                });
-                saveData(data);
-                renderTable();
-                updateStats();
-                showToast(`All students marked absent for ${selectedClass}`, 'error');
-            }
-
+            // ----- RESET TODAY -----
             function resetToday() {
                 if (!confirm('Reset all attendance for today in this class?')) return;
                 const key = getAttendanceKey();
@@ -1119,7 +1287,7 @@
                 saveData(data);
                 renderTable();
                 updateStats();
-                showToast(`Attendance reset for today`, 'success');
+                showToast(`🔄 Attendance reset for today`, 'info');
             }
 
             // ----- MODAL -----
@@ -1172,7 +1340,7 @@
                 clearTimeout(toast._timeout);
                 toast._timeout = setTimeout(() => {
                     toast.classList.remove('show');
-                }, 3000);
+                }, 3500);
             }
 
             // ----- HELPERS -----
@@ -1190,17 +1358,22 @@
             function bindEvents() {
                 generateQRBtn.addEventListener('click', generateQR);
 
-                markPresentBtn.addEventListener('click', function() {
-                    // Simulate QR scan: mark all as present
-                    markAllPresent();
+                // Scan QR button - opens popup
+                scanQRBtn.addEventListener('click', openScanPopup);
+
+                // Scan popup buttons
+                confirmScanBtn.addEventListener('click', confirmScan);
+                cancelScanBtn.addEventListener('click', closeScanPopup);
+                scanPopup.addEventListener('click', (e) => {
+                    if (e.target === scanPopup) closeScanPopup();
                 });
 
-                markAbsentBtn.addEventListener('click', function() {
-                    markAllAbsent();
+                // Enter key on select
+                scanStudentSelect.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') confirmScan();
                 });
 
                 addStudentBtn.addEventListener('click', openAddModal);
-
                 closeModalBtn.addEventListener('click', closeModal);
                 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
                 form.addEventListener('submit', handleFormSubmit);
@@ -1218,7 +1391,6 @@
 
                 resetAttendanceBtn.addEventListener('click', resetToday);
 
-                // When class or date changes, regenerate QR and update table
                 classSelect.addEventListener('change', function() {
                     selectedClass = this.value;
                     generateQR();
