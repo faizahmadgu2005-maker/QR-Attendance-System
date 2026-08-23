@@ -1,0 +1,11 @@
+{
+  "students": [
+    { "id": 1, "name": "Aarav Singh", "roll": "BCA2024001", "class": "BCA-1A" }
+  ],
+  "attendance": {
+    "2026-08-23_BCA-1A": {
+      "1": "present",
+      "2": "absent"
+    }
+  }
+}
