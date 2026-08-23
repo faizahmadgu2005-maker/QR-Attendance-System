@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galgotias University - QR Attendance System</title>
+    <!-- Font Awesome & QRCode.js library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a2a3a, #2c3e50);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 i {
+            color: #f1c40f;
+        }
+
+        .header .university-badge {
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .stat-card .icon.blue {
+            background: #dbeafe;
+            color: #1a56db;
+        }
+        .stat-card .icon.green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .stat-card .icon.red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .stat-card .icon.yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .stat-card .icon.purple {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .stat-card .info h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a2a3a;
+        }
+
+        .stat-card .info p {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a2a3a;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: #2c3e50;
+        }
+
+        /* QR Section */
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px dashed #d1d5db;
+            display: inline-block;
+        }
+
+        #qrcode img {
+            display: block;
+        }
+
+        .qr-controls {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        .qr-controls select,
+        .qr-controls input {
+            padding: 0.5rem 1rem;
+            border: 1.5px solid #d1d5db;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            outline: none;
+            background: #f9fafb;
+            transition: 0.15s;
+        }
+
+        .qr-controls select:focus,
+        .qr-controls input:focus {
+            border-color: #2c3e50;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #1a2a3a;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2c3e50;
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: #065f46;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-danger {
+            background: #991b1b;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #7f1d1d;
+        }
+
+        .btn-warning {
+            background: #d97706;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #b45309;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #d1d5db;
+            color: #1a2a3a;
+        }
+        .btn-outline:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-sm {
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Student List */
+        .student-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .student-list-header .search-box {
+            display: flex;
+            align-items: center;
+            background: #f3f4f6;
+            border-radius: 30px;
+            padding: 0.2rem 0.2rem 0.2rem 1rem;
+            flex: 1 1 200px;
+        }
+
+        .student-list-header .search-box input {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0.5rem;
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
+        }
+
+        .student-list-header .search-box button {
+            background: #1a2a3a;
+            border: none;
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 600px;
+        }
+
+        th {
+            background: #f9fafb;
+            padding: 0.7rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1a2a3a;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-present {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-absent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-not-marked {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .actions-cell button {
+            background: transparent;
+            border: none;
+            padding: 3px 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .btn-toggle {
+            background: #dbeafe;
+            color: #1a56db;
+        }
+        .btn-toggle:hover {
+            background: #bfdbfe;
+        }
+
+        .btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .btn-edit:hover {
+            background: #fde68a;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: #6b7280;
+            padding: 2rem 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 460px;
+            width: 92%;
+            padding: 2rem;
+            border-radius: 28px;
+            animation: slideUp 0.25s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-content h2 {
+            color: #1a2a3a;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #374151;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.65rem 1rem;
+            border: 1.5px solid #d1d5db;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.15s;
+            background: #fafbfc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #1a2a3a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26, 42, 58, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .modal-actions button {
+            padding: 0.6rem 1.8rem;
+            border-radius: 30px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-save {
+            background: #1a2a3a;
+            color: white;
+        }
+        .btn-save:hover {
+            background: #2c3e50;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .footer .json-badge {
+            background: #f3f4f6;
+            padding: 0.2rem 1.2rem;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a2a3a;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #065f46;
+        }
+        .toast.error {
+            background: #991b1b;
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat-card .info h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .qr-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .student-list-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-qrcode"></i>
+                QR Attendance System
+            </h1>
+            <div class="university-badge">
+                <i class="fas fa-university"></i> Galgotias University · BCA
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="icon blue"><i class="fas fa-users"></i></div>
+                <div class="info">
+                    <h3 id="totalStudents">0</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon green"><i class="fas fa-user-check"></i></div>
+                <div class="info">
+                    <h3 id="presentToday">0</h3>
+                    <p>Present Today</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon red"><i class="fas fa-user-times"></i></div>
+                <div class="info">
+                    <h3 id="absentToday">0</h3>
+                    <p>Absent Today</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon yellow"><i class="fas fa-calendar-check"></i></div>
+                <div class="info">
+                    <h3 id="classesHeld">0</h3>
+                    <p>Classes Held</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon purple"><i class="fas fa-clock"></i></div>
+                <div class="info">
+                    <h3 id="lastScan">-</h3>
+                    <p>Last Scan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- QR Code Section -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-qrcode"></i> QR Code Scanner
+                </div>
+                <div class="qr-container">
+                    <div id="qrcode"></div>
+                    <div class="qr-controls">
+                        <select id="classSelect">
+                            <option value="BCA-1A">BCA 1st Year - A</option>
+                            <option value="BCA-1B">BCA 1st Year - B</option>
+                            <option value="BCA-2A">BCA 2nd Year - A</option>
+                            <option value="BCA-2B">BCA 2nd Year - B</option>
+                            <option value="BCA-3A">BCA 3rd Year - A</option>
+                            <option value="BCA-3B">BCA 3rd Year - B</option>
+                        </select>
+                        <input type="date" id="qrDate" />
+                        <button class="btn btn-primary btn-sm" id="generateQRBtn">
+                            <i class="fas fa-sync-alt"></i> Generate
+                        </button>
+                    </div>
+                    <div style="display:flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;">
+                        <button class="btn btn-success btn-sm" id="markPresentBtn">
+                            <i class="fas fa-check"></i> Mark Present (Scan)
+                        </button>
+                        <button class="btn btn-danger btn-sm" id="markAbsentBtn">
+                            <i class="fas fa-times"></i> Mark Absent
+                        </button>
+                    </div>
+                    <p style="font-size:0.8rem;color:#6b7280;margin-top:0.5rem;">
+                        <i class="fas fa-info-circle"></i> Click "Mark Present" to simulate QR scan
+                    </p>
+                </div>
+            </div>
+
+            <!-- Student List -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-list-ul"></i> Student Roster
+                    <span style="margin-left:auto;font-size:0.8rem;font-weight:400;color:#6b7280;">
+                        <i class="fas fa-edit"></i> Manage
+                    </span>
+                </div>
+
+                <div class="student-list-header">
+                    <button class="btn btn-primary btn-sm" id="addStudentBtn">
+                        <i class="fas fa-user-plus"></i> Add
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchStudent" placeholder="Search name, roll..." />
+                        <button id="searchBtn"><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="resetAttendanceBtn">
+                        <i class="fas fa-undo"></i> Reset Today
+                    </button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Roll No</th>
+                                <th>Class</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <!-- dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <span><i class="fas fa-save"></i> Data stored in localStorage (JSON)</span>
+            <span class="json-badge"><i class="fas fa-code"></i> attendance_qr.json</span>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <h2 id="modalTitle"><i class="fas fa-user-plus"></i> Add Student</h2>
+            <form id="studentForm">
+                <input type="hidden" id="editStudentId" />
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="e.g. Rahul Sharma" required />
+                </div>
+                <div class="form-group">
+                    <label>Roll Number</label>
+                    <input type="text" id="studentRoll" placeholder="e.g. BCA2024001" required />
+                </div>
+                <div class="form-group">
+                    <label>Class</label>
+                    <select id="studentClass">
+                        <option value="BCA-1A">BCA 1st Year - A</option>
+                        <option value="BCA-1B">BCA 1st Year - B</option>
+                        <option value="BCA-2A">BCA 2nd Year - A</option>
+                        <option value="BCA-2B">BCA 2nd Year - B</option>
+                        <option value="BCA-3A">BCA 3rd Year - A</option>
+                        <option value="BCA-3B">BCA 3rd Year - B</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="closeModalBtn">Cancel</button>
+                    <button type="submit" class="btn-save"><i class="fas fa-check"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ----- DATA LAYER -----
+            const STORAGE_KEY = 'galgotias_qr_attendance';
+
+            function getDefaultData() {
+                return {
+                    students: [
+                        { id: 1, name: 'Aarav Singh', roll: 'BCA2024001', class: 'BCA-1A' },
+                        { id: 2, name: 'Priya Patel', roll: 'BCA2024002', class: 'BCA-1A' },
+                        { id: 3, name: 'Rohit Kumar', roll: 'BCA2024003', class: 'BCA-1B' },
+                        { id: 4, name: 'Sneha Reddy', roll: 'BCA2024004', class: 'BCA-1B' },
+                        { id: 5, name: 'Vikram Singh', roll: 'BCA2024005', class: 'BCA-2A' },
+                        { id: 6, name: 'Ananya Gupta', roll: 'BCA2024006', class: 'BCA-2A' },
+                        { id: 7, name: 'Arjun Nair', roll: 'BCA2024007', class: 'BCA-2B' },
+                        { id: 8, name: 'Kavya Menon', roll: 'BCA2024008', class: 'BCA-2B' },
+                    ],
+                    attendance: {} // { "2026-08-23_BCA-1A": { "1": "present", "2": "absent", ... } }
+                };
+            }
+
+            function loadData() {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        if (parsed.students && parsed.attendance) return parsed;
+                    } catch (e) { /* fallback */ }
+                }
+                const def = getDefaultData();
+                saveData(def);
+                return def;
+            }
+
+            function saveData(data) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            let data = loadData();
+            let nextStudentId = data.students.reduce((max, s) => Math.max(max, s.id), 0) + 1;
+
+            // ----- STATE -----
+            let currentFilter = '';
+            let selectedDate = new Date().toISOString().split('T')[0];
+            let selectedClass = 'BCA-1A';
+
+            // ----- DOM REFS -----
+            const tbody = document.getElementById('studentTableBody');
+            const totalStudents = document.getElementById('totalStudents');
+            const presentToday = document.getElementById('presentToday');
+            const absentToday = document.getElementById('absentToday');
+            const classesHeld = document.getElementById('classesHeld');
+            const lastScan = document.getElementById('lastScan');
+
+            const classSelect = document.getElementById('classSelect');
+            const qrDateInput = document.getElementById('qrDate');
+            const generateQRBtn = document.getElementById('generateQRBtn');
+            const markPresentBtn = document.getElementById('markPresentBtn');
+            const markAbsentBtn = document.getElementById('markAbsentBtn');
+            const addStudentBtn = document.getElementById('addStudentBtn');
+            const searchInput = document.getElementById('searchStudent');
+            const searchBtn = document.getElementById('searchBtn');
+            const resetAttendanceBtn = document.getElementById('resetAttendanceBtn');
+
+            const modal = document.getElementById('studentModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('studentForm');
+            const editIdInput = document.getElementById('editStudentId');
+            const studentName = document.getElementById('studentName');
+            const studentRoll = document.getElementById('studentRoll');
+            const studentClass = document.getElementById('studentClass');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            let qrCodeInstance = null;
+
+            // ----- INIT -----
+            function init() {
+                qrDateInput.value = selectedDate;
+                classSelect.value = selectedClass;
+                generateQR();
+                renderTable();
+                updateStats();
+                bindEvents();
+            }
+
+            // ----- QR CODE GENERATION -----
+            function generateQR() {
+                const date = qrDateInput.value || selectedDate;
+                const cls = classSelect.value;
+                const dataStr = `GU_BCA_ATTENDANCE|${cls}|${date}`;
+
+                const qrContainer = document.getElementById('qrcode');
+                qrContainer.innerHTML = '';
+
+                qrCodeInstance = new QRCode(qrContainer, {
+                    text: dataStr,
+                    width: 200,
+                    height: 200,
+                    colorDark: '#1a2a3a',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                selectedDate = date;
+                selectedClass = cls;
+
+                // Update last scan
+                const now = new Date();
+                lastScan.textContent = now.toLocaleTimeString();
+            }
+
+            // ----- ATTENDANCE HELPERS -----
+            function getAttendanceKey() {
+                return `${selectedDate}_${selectedClass}`;
+            }
+
+            function getAttendanceForCurrent() {
+                const key = getAttendanceKey();
+                if (!data.attendance[key]) {
+                    data.attendance[key] = {};
+                    // Initialize all students as 'not-marked'
+                    data.students.forEach(s => {
+                        if (s.class === selectedClass) {
+                            data.attendance[key][s.id] = 'not-marked';
+                        }
+                    });
+                    saveData(data);
+                }
+                return data.attendance[key];
+            }
+
+            function getStudentsForCurrentClass() {
+                return data.students.filter(s => s.class === selectedClass);
+            }
+
+            // ----- RENDER TABLE -----
+            function renderTable() {
+                const students = getStudentsForCurrentClass();
+                const attendance = getAttendanceForCurrent();
+
+                let filtered = students;
+                if (currentFilter.trim() !== '') {
+                    const q = currentFilter.trim().toLowerCase();
+                    filtered = students.filter(s =>
+                        s.name.toLowerCase().includes(q) ||
+                        s.roll.toLowerCase().includes(q)
+                    );
+                }
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr class="empty-row"><td colspan="6"><i class="fas fa-user-slash"></i> No students found in this class</td></tr>`;
+                    updateStats();
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach((student, idx) => {
+                    const status = attendance[student.id] || 'not-marked';
+                    let statusClass = 'status-not-marked';
+                    let statusLabel = 'Not Marked';
+                    if (status === 'present') {
+                        statusClass = 'status-present';
+                        statusLabel = 'Present';
+                    } else if (status === 'absent') {
+                        statusClass = 'status-absent';
+                        statusLabel = 'Absent';
+                    }
+
+                    html += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td><strong>${escapeHTML(student.name)}</strong></td>
+                            <td>${escapeHTML(student.roll)}</td>
+                            <td>${escapeHTML(student.class)}</td>
+                            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <button class="btn-toggle" data-id="${student.id}" data-status="${status}">
+                                        <i class="fas fa-sync-alt"></i> Toggle
+                                    </button>
+                                    <button class="btn-edit" data-id="${student.id}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete" data-id="${student.id}"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+
+                // Event bindings for actions
+                document.querySelectorAll('.btn-toggle').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        const currentStatus = this.dataset.status;
+                        const newStatus = currentStatus === 'present' ? 'absent' : (currentStatus === 'absent' ?
+                            'present' : 'present');
+                        setAttendance(id, newStatus);
+                    });
+                });
+
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        openEditModal(id);
+                    });
+                });
+
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        deleteStudent(id);
+                    });
+                });
+
+                updateStats();
+            }
+
+            function setAttendance(studentId, status) {
+                const key = getAttendanceKey();
+                if (!data.attendance[key]) {
+                    data.attendance[key] = {};
+                }
+                data.attendance[key][studentId] = status;
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`Student marked ${status}`, status === 'present' ? 'success' : 'error');
+            }
+
+            // ----- STATS -----
+            function updateStats() {
+                const students = getStudentsForCurrentClass();
+                const attendance = getAttendanceForCurrent();
+
+                let present = 0,
+                    absent = 0,
+                    notMarked = 0;
+                students.forEach(s => {
+                    const status = attendance[s.id] || 'not-marked';
+                    if (status === 'present') present++;
+                    else if (status === 'absent') absent++;
+                    else notMarked++;
+                });
+
+                totalStudents.textContent = students.length;
+                presentToday.textContent = present;
+                absentToday.textContent = absent;
+
+                // Count total classes held (unique date_class combinations)
+                const classKeys = Object.keys(data.attendance).filter(k => k.includes(selectedClass));
+                classesHeld.textContent = classKeys.length || 0;
+            }
+
+            // ----- CRUD STUDENTS -----
+            function addStudent(name, roll, cls) {
+                const newStudent = { id: nextStudentId++, name, roll, class: cls };
+                data.students.push(newStudent);
+                // Add to all existing attendance records for this class
+                for (const key in data.attendance) {
+                    if (key.includes(cls)) {
+                        data.attendance[key][newStudent.id] = 'not-marked';
+                    }
+                }
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`Student ${name} added successfully`, 'success');
+            }
+
+            function updateStudent(id, name, roll, cls) {
+                const idx = data.students.findIndex(s => s.id === id);
+                if (idx !== -1) {
+                    const oldClass = data.students[idx].class;
+                    data.students[idx] = { id, name, roll, class: cls };
+                    // If class changed, update attendance records
+                    if (oldClass !== cls) {
+                        // Remove from old class records
+                        for (const key in data.attendance) {
+                            if (key.includes(oldClass)) {
+                                delete data.attendance[key][id];
+                            }
+                        }
+                        // Add to new class records
+                        for (const key in data.attendance) {
+                            if (key.includes(cls)) {
+                                data.attendance[key][id] = 'not-marked';
+                            }
+                        }
+                    }
+                    saveData(data);
+                    renderTable();
+                    updateStats();
+                    showToast(`Student updated successfully`, 'success');
+                    return true;
+                }
+                return false;
+            }
+
+            function deleteStudent(id) {
+                if (!confirm('Delete this student and all their attendance records?')) return;
+                const student = data.students.find(s => s.id === id);
+                if (!student) return;
+                data.students = data.students.filter(s => s.id !== id);
+                // Remove from all attendance records
+                for (const key in data.attendance) {
+                    delete data.attendance[key][id];
+                }
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`Student ${student.name} deleted`, 'error');
+            }
+
+            // ----- BULK ATTENDANCE -----
+            function markAllPresent() {
+                const key = getAttendanceKey();
+                const students = getStudentsForCurrentClass();
+                students.forEach(s => {
+                    data.attendance[key][s.id] = 'present';
+                });
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`All students marked present for ${selectedClass}`, 'success');
+            }
+
+            function markAllAbsent() {
+                const key = getAttendanceKey();
+                const students = getStudentsForCurrentClass();
+                students.forEach(s => {
+                    data.attendance[key][s.id] = 'absent';
+                });
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`All students marked absent for ${selectedClass}`, 'error');
+            }
+
+            function resetToday() {
+                if (!confirm('Reset all attendance for today in this class?')) return;
+                const key = getAttendanceKey();
+                const students = getStudentsForCurrentClass();
+                students.forEach(s => {
+                    data.attendance[key][s.id] = 'not-marked';
+                });
+                saveData(data);
+                renderTable();
+                updateStats();
+                showToast(`Attendance reset for today`, 'success');
+            }
+
+            // ----- MODAL -----
+            function openAddModal() {
+                modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> Add Student';
+                form.reset();
+                editIdInput.value = '';
+                studentClass.value = selectedClass;
+                studentName.focus();
+                modal.classList.add('show');
+            }
+
+            function openEditModal(id) {
+                const student = data.students.find(s => s.id === id);
+                if (!student) return;
+                modalTitle.innerHTML = '<i class="fas fa-user-edit"></i> Edit Student';
+                editIdInput.value = student.id;
+                studentName.value = student.name;
+                studentRoll.value = student.roll;
+                studentClass.value = student.class;
+                modal.classList.add('show');
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+            }
+
+            function handleFormSubmit(e) {
+                e.preventDefault();
+                const name = studentName.value.trim();
+                const roll = studentRoll.value.trim();
+                const cls = studentClass.value;
+                if (!name || !roll) {
+                    alert('Please fill all fields.');
+                    return;
+                }
+                const editId = editIdInput.value;
+                if (editId) {
+                    updateStudent(parseInt(editId), name, roll, cls);
+                } else {
+                    addStudent(name, roll, cls);
+                }
+                closeModal();
+            }
+
+            // ----- TOAST -----
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toast.className = 'toast show ' + type;
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // ----- HELPERS -----
+            function escapeHTML(str) {
+                return String(str).replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+            }
+
+            // ----- BIND EVENTS -----
+            function bindEvents() {
+                generateQRBtn.addEventListener('click', generateQR);
+
+                markPresentBtn.addEventListener('click', function() {
+                    // Simulate QR scan: mark all as present
+                    markAllPresent();
+                });
+
+                markAbsentBtn.addEventListener('click', function() {
+                    markAllAbsent();
+                });
+
+                addStudentBtn.addEventListener('click', openAddModal);
+
+                closeModalBtn.addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+                form.addEventListener('submit', handleFormSubmit);
+
+                searchBtn.addEventListener('click', function() {
+                    currentFilter = searchInput.value;
+                    renderTable();
+                });
+                searchInput.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        currentFilter = searchInput.value;
+                        renderTable();
+                    }
+                });
+
+                resetAttendanceBtn.addEventListener('click', resetToday);
+
+                // When class or date changes, regenerate QR and update table
+                classSelect.addEventListener('change', function() {
+                    selectedClass = this.value;
+                    generateQR();
+                    renderTable();
+                });
+
+                qrDateInput.addEventListener('change', function() {
+                    selectedDate = this.value;
+                    generateQR();
+                    renderTable();
+                });
+            }
+
+            // ----- START -----
+            init();
+        })();
+    </script>
+</body>
+</html>
