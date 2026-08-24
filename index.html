@@ -673,7 +673,7 @@
         <div class="header">
             <h1>
                 <i class="fas fa-qrcode"></i>
-                QR Attendance System
+                QR Attendance System Data
             </h1>
             <div class="university-badge">
                 <i class="fas fa-university"></i> Galgotias University · BCA
@@ -874,12 +874,14 @@
                     students: [
                         { id: 1, name: 'Aarav Singh', roll: 'BCA2024001', class: 'BCA-1A' },
                         { id: 2, name: 'Priya Patel', roll: 'BCA2024002', class: 'BCA-1A' },
-                        { id: 3, name: 'Rohit Kumar', roll: 'BCA2024003', class: 'BCA-1B' },
-                        { id: 4, name: 'Sneha Reddy', roll: 'BCA2024004', class: 'BCA-1B' },
-                        { id: 5, name: 'Vikram Singh', roll: 'BCA2024005', class: 'BCA-2A' },
-                        { id: 6, name: 'Ananya Gupta', roll: 'BCA2024006', class: 'BCA-2A' },
-                        { id: 7, name: 'Arjun Nair', roll: 'BCA2024007', class: 'BCA-2B' },
-                        { id: 8, name: 'Kavya Menon', roll: 'BCA2024008', class: 'BCA-2B' },
+                        { id: 3, name: 'Faiz', roll: 'BCA2024003', class: 'BCA-1A' },
+                        { id: 4, name: 'vikas', roll: 'BCA2024004', class: 'BCA-1A' },
+                        { id: 5, name: 'Rohit Kumar', roll: 'BCA2024003', class: 'BCA-1B' },
+                        { id: 6, name: 'Sneha Reddy', roll: 'BCA2024004', class: 'BCA-1B' },
+                        { id: 7, name: 'Vikram Singh', roll: 'BCA2024005', class: 'BCA-2A' },
+                        { id: 8, name: 'Ananya Gupta', roll: 'BCA2024006', class: 'BCA-2A' },
+                        { id: 9, name: 'Arjun Nair', roll: 'BCA2024007', class: 'BCA-2B' },
+                        { id: 10, name: 'Kavya Menon', roll: 'BCA2024008', class: 'BCA-2B' },
                     ],
                     attendance: {} // { "2026-08-23_BCA-1A": { "1": "present", "2": "absent", ... } }
                 };
@@ -903,7 +905,7 @@
             }
 
             let data = loadData();
-            let nextStudentId = data.students.reduce((max, s) => Math.max(max, s.id), 0) + 1;
+            let nextStudentId = data.students.reduce((max, s) => Math.max(max, s.id), 0) + 4;
 
             // ----- STATE -----
             let currentFilter = '';
